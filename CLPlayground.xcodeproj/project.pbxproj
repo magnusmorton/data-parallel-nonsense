@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F76AAF671C5AC74C009E97DC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F76AAF661C5AC74C009E97DC /* main.c */; };
+		F76AAF6E1C5ACC20009E97DC /* kernel.cl in Sources */ = {isa = PBXBuildFile; fileRef = F76AAF6D1C5ACC20009E97DC /* kernel.cl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		F76AAF631C5AC74C009E97DC /* CLPlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLPlayground; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76AAF661C5AC74C009E97DC /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		F76AAF6D1C5ACC20009E97DC /* kernel.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = kernel.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				F76AAF661C5AC74C009E97DC /* main.c */,
+				F76AAF6D1C5ACC20009E97DC /* kernel.cl */,
 			);
 			path = CLPlayground;
 			sourceTree = "<group>";
@@ -119,6 +122,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F76AAF671C5AC74C009E97DC /* main.c in Sources */,
+				F76AAF6E1C5ACC20009E97DC /* kernel.cl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
