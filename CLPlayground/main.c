@@ -13,7 +13,7 @@
 
 #include "kernel.cl.h"
 
-#define RANGE 20000
+#define RANGE 65536
 #define START 4000
 
 int gcd(int n, int k)
@@ -32,7 +32,6 @@ int phi(int n)
     int acc = 0;
     for (int i=0; i< n; i++) {
         if (gcd(n, i) == 1) {
-            //printf("acc++\n");
             acc++;
         }
     }
@@ -70,10 +69,10 @@ int main(int argc, const char * argv[]) {
         void *mem_in = gcl_malloc(sizeof(cl_int)*RANGE, data, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR);
         void *mem_out = gcl_malloc(sizeof(cl_int)*RANGE, NULL, CL_MEM_WRITE_ONLY);
         dispatch_sync(queue, ^{
-            size_t wgs = 100;
-    //         gcl_get_kernel_block_workgroup_info(euler_totient_kernel,
-    //                                            CL_KERNEL_WORK_GROUP_SIZE,
-    //                                            sizeof(wgs), &wgs, NULL);
+            size_t wgs;
+            gcl_get_kernel_block_workgroup_info(euler_totient_kernel,
+                                               CL_KERNEL_WORK_GROUP_SIZE,
+                                               sizeof(wgs), &wgs, NULL);
             
             cl_ndrange range = {
                 1,
