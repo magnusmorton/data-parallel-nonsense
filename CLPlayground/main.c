@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <mach/mach.h>
+#include <mach/mach_time.h>
 
 #include "kernel.cl.h"
 
@@ -46,6 +48,7 @@ void euler_totient(int* input,  int* output)
 }
 
 int main(int argc, const char * argv[]) {
+    static mach_timebase_info_data_t sTimebaseInfo;
     int seq = 0;
     // insert code here...
     int* data = (int*) malloc(sizeof(cl_int)*RANGE);
@@ -61,6 +64,7 @@ int main(int argc, const char * argv[]) {
             seq = TRUE;
         }
     }
+    uint64_t start = mach_absolute_time();
     if (seq)
         euler_totient(data, out);
     else {
@@ -93,6 +97,13 @@ int main(int argc, const char * argv[]) {
     for (int i =0; i < RANGE; i++) {
         acc += out[i];
     }
+    uint64_t end = mach_absolute_time();
+    if ( sTimebaseInfo.denom == 0 ) {
+        mach_timebase_info(&sTimebaseInfo);
+    }
+    uint64_t elapsed = end - start;
+    uint64_t elapsedmillis = (elapsed/1000000) * sTimebaseInfo.numer / sTimebaseInfo.denom;
     printf("SumEuler out: %d\n", acc );
+    printf("Time elapsed: %llu milliseconds\n", elapsedmillis);
     return 0;
 }
