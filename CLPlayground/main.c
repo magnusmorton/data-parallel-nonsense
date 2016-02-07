@@ -50,6 +50,7 @@ void euler_totient(int* input,  int* output)
 int main(int argc, const char * argv[]) {
     static mach_timebase_info_data_t sTimebaseInfo;
     int seq = 0;
+    int cpu = 0;
     // insert code here...
     int* data = (int*) malloc(sizeof(cl_int)*RANGE);
     for (int i = 0; i < RANGE; i ++) {
@@ -62,13 +63,19 @@ int main(int argc, const char * argv[]) {
     if (argc > 1){
         if (strncmp(argv[1], "seq", 3) == 0) {
             seq = TRUE;
+        } else if (strncmp(argv[1], "cpu", 3) == 0) {
+            cpu = 1;
         }
     }
     uint64_t start = mach_absolute_time();
     if (seq)
         euler_totient(data, out);
     else {
-        dispatch_queue_t queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, NULL);
+        dispatch_queue_t queue;
+        if (cpu)
+            queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_CPU, NULL);
+        else
+            queue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, NULL);
        
         void *mem_in = gcl_malloc(sizeof(cl_int)*RANGE, data, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR);
         void *mem_out = gcl_malloc(sizeof(cl_int)*RANGE, NULL, CL_MEM_WRITE_ONLY);
