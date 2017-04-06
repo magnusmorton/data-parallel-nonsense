@@ -59,6 +59,7 @@ int main(int argc, const char * argv[]) {
     }
     
     int* out = (int*) malloc(sizeof(cl_int)*RANGE);
+    int* sums = (int*) malloc(sizeof(cl_int)*RANGE);
     printf("Hello, World!\n");
     if (argc > 1){
         if (strncmp(argv[1], "seq", 3) == 0) {
@@ -79,12 +80,16 @@ int main(int argc, const char * argv[]) {
        
         void *mem_in = gcl_malloc(sizeof(cl_int)*RANGE, data, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR);
         void *mem_out = gcl_malloc(sizeof(cl_int)*RANGE, NULL, CL_MEM_WRITE_ONLY);
+        void *mem_sums = gcl_malloc(sizeof(cl_int)*RANGE, NULL, CL_MEM_WRITE_ONLY);
         dispatch_sync(queue, ^{
-            size_t wgs;
-            gcl_get_kernel_block_workgroup_info(euler_totient_kernel,
-                                               CL_KERNEL_WORK_GROUP_SIZE,
-                                               sizeof(wgs), &wgs, NULL);
-            
+            size_t wgs = 1;
+            if (!cpu){
+                gcl_get_kernel_block_workgroup_info(euler_totient_kernel,
+                                                   CL_KERNEL_WORK_GROUP_SIZE,
+                                                   sizeof(wgs), &wgs, NULL);
+            }
+            size_t num_wgs;
+//            gcl_get_kernel_block_workgroup_info(parsum_kernel, CL_KERNEL_WORK_GROUP_SIZE, <#size_t param_value_size#>, <#void * _Nonnull param_value#>, <#size_t * _Nullable param_value_size_ret#>);
             cl_ndrange range = {
                 1,
                 {0, 0, 0},
@@ -93,10 +98,14 @@ int main(int argc, const char * argv[]) {
             };
             
             euler_totient_kernel(&range,(cl_int*)mem_in, (cl_int*)mem_out);
+            parsum_kernel(&range, (cl_int*)mem_out, (cl_int*)mem_sums, sizeof(cl_int)*wgs);
             
             gcl_memcpy(out, mem_out, sizeof(cl_float) * RANGE);
+            gcl_memcpy(sums, mem_sums, sizeof(cl_int) * RANGE);
+            
             
         });
+        dispatch_release(queue);
     }
     
     // sum everything
